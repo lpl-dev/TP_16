@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QGridLayout, QPushButton, QLineEdit
+from PySide2.QtWidgets import QWidget, QApplication, QGridLayout, QPushButton, QLineEdit
 from PySide2.QtCore import Qt
 
 class Window(QWidget):
@@ -12,6 +12,7 @@ class Window(QWidget):
         col_nbr = 4
         self.line_edit=QLineEdit()
         self.line_edit.setAlignment(Qt.AlignRight)
+        self.line_edit.setReadOnly(True)
         self.line_edit.setText('0')
         self.layout.addWidget(self.line_edit, 0, 0, 1, col_nbr)
 
@@ -42,13 +43,17 @@ class Window(QWidget):
             if button=='C':
                 self.line_edit.setText('0')
             elif button=='CE':
-                self.line_edit.setText(line_edit_content[:-1] if len(line_edit_content)>1 else '0')
+                if line_edit_content=='ERREUR': self.line_edit.setText('0')
+                else : self.line_edit.setText(line_edit_content[:-1] if len(line_edit_content)>1 else '0')
             elif button.isnumeric():
                 self.line_edit.setText(line_edit_content+button)
             elif button in '-+*/.' and line_edit_content[-1] not in '-+*/.':
                 self.line_edit.setText(line_edit_content + button)
-            else:
-                self.line_edit.setText(str(eval(line_edit_content)))
+            elif button=='=':
+                try:
+                    self.line_edit.setText(str(eval(line_edit_content)))
+                except Exception:
+                    self.line_edit.setText('ERREUR')
 
 if __name__=='__main__':
     app=QApplication([])
